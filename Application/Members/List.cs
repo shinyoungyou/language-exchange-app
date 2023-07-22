@@ -34,14 +34,14 @@ namespace Application.Members
                 request.UserParams.CurrentUsername = _userAccessor.GetUsername();
 
                 var cacheKey = "MemberList_" + request.UserParams.ToCacheKey() + "_" + request.UserParams.PageNumber + "_" + request.UserParams.PageSize;
-                // var cachedData = _cacheService.Get<List<Member>>(cacheKey);
-                // if (cachedData != null)
-                // {
-                //     var startIndex = (request.UserParams.PageNumber - 1) * request.UserParams.PageSize;
-                //     var items = cachedData.Skip(startIndex).Take(request.UserParams.PageSize).ToList();
-                //     var existingPagedMembers = new PagedList<Member>(items, cachedData.Count, request.UserParams.PageNumber, request.UserParams.PageSize);
-                //     return Result<PagedList<Member>>.Success(existingPagedMembers);
-                // }
+                var cachedData = _cacheService.Get<List<Member>>(cacheKey);
+                if (cachedData != null)
+                {
+                    var startIndex = (request.UserParams.PageNumber - 1) * request.UserParams.PageSize;
+                    var items = cachedData.Skip(startIndex).Take(request.UserParams.PageSize).ToList();
+                    var existingPagedMembers = new PagedList<Member>(items, cachedData.Count, request.UserParams.PageNumber, request.UserParams.PageSize);
+                    return Result<PagedList<Member>>.Success(existingPagedMembers);
+                }
 
                 var gender = await _context.Users
                     .Where(x => x.UserName == _userAccessor.GetUsername())
@@ -80,7 +80,7 @@ namespace Application.Members
 
                 var members = query.AsNoTracking().ProjectTo<Member>(_mapper.ConfigurationProvider, new { currentUsername = _userAccessor.GetUsername() });
 
-                // _cacheService.Set(cacheKey, members.ToList(), TimeSpan.FromMinutes(20));
+                _cacheService.Set(cacheKey, members.ToList(), TimeSpan.FromMinutes(20));
 
                 var newPagedMembers = await PagedList<Member>.CreateAsync(members, 
                     request.UserParams.PageNumber,
