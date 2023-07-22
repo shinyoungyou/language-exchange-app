@@ -1,0 +1,26 @@
+# fly.toml app configuration file generated for language-exchange on 2023-07-13T14:38:08-07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "language-exchange"
+primary_region = "sea"
+
+[build]
+  image = "austynyou/language-exchange:latest"
+
+[env]
+  ASPNETCORE_URLS="http://+:8080"
+  REACT_APP_API_URL = "${{ secrets.REACT_APP_API_URL }}"
+  REACT_APP_CHAT_URL = "${{ secrets.REACT_APP_CHAT_URL }}"
+  REACT_APP_GOOGLE_CLIENT_ID = "${{ secrets.REACT_APP_GOOGLE_CLIENT_ID }}"
+  REACT_APP_GOOGLE_MAPS_API_KEY = "${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}"
+  REACT_APP_RECAPTCHA_SITE_KEY = "${{ secrets.REACT_APP_RECAPTCHA_SITE_KEY }}"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]

@@ -1,0 +1,32 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__AzureRedisConnection: $(ConnectionStrings__AzureRedisConnection)
+      - ConnectionStrings__DefaultConnection: $(ConnectionStrings__DefaultConnection)
+      - AzureBlobStorage__ConnectionString: $(AzureBlobStorage__ConnectionString)
+      - AzureBlobStorage__ContainerName: $(AzureBlobStorage__ContainerName)
+      - TokenKey: $(TokenKey)
+      - Google__ClientId: $(Google__ClientId)
+      - Google__ClientSecret: $(Google__ClientSecret)
+      - OpenCage__ApiKey: $(OpenCage__ApiKey)
+      - REACT_APP_API_URL: $(REACT_APP_API_URL)
+      - REACT_APP_CHAT_URL: $(REACT_APP_CHAT_URL)
+      - REACT_APP_GOOGLE_CLIENT_ID: $(REACT_APP_GOOGLE_CLIENT_ID)
+      - REACT_APP_GOOGLE_MAPS_API_KEY: $(REACT_APP_GOOGLE_MAPS_API_KEY)
+      - REACT_APP_RECAPTCHA_SITE_KEY: $(REACT_APP_RECAPTCHA_SITE_KEY)
+  db:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER: $(POSTGRES_USER)
+      - POSTGRES_PASSWORD: $(POSTGRES_PASSWORD)
+      - POSTGRES_DB: $(POSTGRES_DB)
